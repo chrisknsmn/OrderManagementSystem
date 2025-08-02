@@ -84,6 +84,19 @@ namespace RepairOrderSystem.Console.Services
             return null;
         }
 
+        public async Task<RepairOrder?> AddRepairOrderAsync(CreateRepairOrderRequest request)
+        {
+            var repairOrder = new RepairOrder
+            {
+                CustomerId = request.CustomerId,
+                VehicleId = request.VehicleId,
+                Description = request.Description,
+                EstimatedCost = request.EstimatedCost
+            };
+            
+            return await AddRepairOrderAsync(repairOrder);
+        }
+
         public async Task<List<RepairOrder>> SearchRepairOrdersByLastNameAsync(string lastName)
         {
             var response = await _httpClient.GetAsync($"{_baseUrl}/repairorders/search?lastName={Uri.EscapeDataString(lastName)}");

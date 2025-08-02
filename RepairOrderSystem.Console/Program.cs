@@ -187,16 +187,37 @@ namespace RepairOrderSystem.Console
                 return;
             }
 
-            var repairOrder = new RepairOrder
+            System.Console.Write("Description: ");
+            var description = System.Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(description))
+            {
+                System.Console.WriteLine("Description is required.");
+                return;
+            }
+
+            System.Console.Write("Estimated Cost: $");
+            if (!decimal.TryParse(System.Console.ReadLine(), out decimal estimatedCost))
+            {
+                System.Console.WriteLine("Invalid cost amount.");
+                return;
+            }
+
+            var request = new CreateRepairOrderRequest
             {
                 CustomerId = customerId,
-                VehicleId = vehicleId
+                VehicleId = vehicleId,
+                Description = description,
+                EstimatedCost = estimatedCost
             };
 
-            var result = await _apiService.AddRepairOrderAsync(repairOrder);
+            var result = await _apiService.AddRepairOrderAsync(request);
             if (result != null)
             {
-                System.Console.WriteLine($"Repair Order created successfully! ID: {result.Id}");
+                System.Console.WriteLine($"Repair Order created successfully!");
+                System.Console.WriteLine($"  ID: {result.Id}");
+                System.Console.WriteLine($"  Description: {result.Description}");
+                System.Console.WriteLine($"  Estimated Cost: ${result.EstimatedCost:F2}");
+                System.Console.WriteLine($"  Status: {result.Status}");
             }
             else
             {
@@ -227,6 +248,8 @@ namespace RepairOrderSystem.Console
                     System.Console.WriteLine($"  Order ID: {order.Id}");
                     System.Console.WriteLine($"  Customer: {order.Customer?.FirstName} {order.Customer?.LastName}");
                     System.Console.WriteLine($"  Vehicle: {order.Vehicle?.Year} {order.Vehicle?.Make} {order.Vehicle?.Model}");
+                    System.Console.WriteLine($"  Description: {order.Description}");
+                    System.Console.WriteLine($"  Cost: ${order.EstimatedCost:F2} | Status: {order.Status}");
                     System.Console.WriteLine($"  Created: {order.CreatedDate:yyyy-MM-dd HH:mm}");
                     System.Console.WriteLine();
                 }
@@ -264,7 +287,9 @@ namespace RepairOrderSystem.Console
             System.Console.WriteLine("Repair Orders:");
             foreach (var order in repairOrders)
             {
-                System.Console.WriteLine($"  Order {order.Id}: {order.Customer?.FirstName} {order.Customer?.LastName} - {order.Vehicle?.Year} {order.Vehicle?.Make} {order.Vehicle?.Model} ({order.CreatedDate:yyyy-MM-dd})");
+                System.Console.WriteLine($"  Order {order.Id}: {order.Customer?.FirstName} {order.Customer?.LastName} - {order.Vehicle?.Year} {order.Vehicle?.Make} {order.Vehicle?.Model}");
+                System.Console.WriteLine($"    Description: {order.Description}");
+                System.Console.WriteLine($"    Cost: ${order.EstimatedCost:F2} | Status: {order.Status} | Created: {order.CreatedDate:yyyy-MM-dd}");
             }
         }
     }

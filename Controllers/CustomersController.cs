@@ -43,5 +43,16 @@ namespace OrderManagementSystem.Controllers
             var createdCustomer = _dataService.AddCustomer(customer);
             return CreatedAtAction(nameof(GetById), new { id = createdCustomer.Id }, createdCustomer);
         }
+
+        // NEW: Get customer with all their repair orders
+        [HttpGet("{id}/orders")]
+        public ActionResult<CustomerWithOrdersDto> GetCustomerWithOrders(int id)
+        {
+            var customerWithOrders = _dataService.GetCustomerWithOrders(id);
+            if (customerWithOrders == null)
+                return NotFound($"Customer with ID {id} not found.");
+            
+            return Ok(customerWithOrders);
+        }
     }
 }

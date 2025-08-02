@@ -56,5 +56,43 @@ namespace OrderManagementSystem.Controllers
             var createdRepairOrder = _dataService.AddRepairOrder(repairOrder);
             return CreatedAtAction(nameof(GetById), new { id = createdRepairOrder.Id }, createdRepairOrder);
         }
+
+        // NEW: Get repair orders by status
+        [HttpGet("status/{status}")]
+        public ActionResult<List<RepairOrder>> GetRepairOrdersByStatus(string status)
+        {
+            var validStatuses = new[] { "Open", "In Progress", "Completed", "Cancelled" };
+            if (!validStatuses.Contains(status, StringComparer.OrdinalIgnoreCase))
+            {
+                return BadRequest($"Invalid status. Valid statuses are: {string.Join(", ", validStatuses)}");
+            }
+
+            var orders = _dataService.GetRepairOrdersByStatus(status);
+            return Ok(orders);
+        }
+
+        // NEW: Update repair order status
+        [HttpPatch("{id}/status")]
+        public ActionResult<RepairOrder> UpdateRepairOrderStatus(int id, [FromBody] UpdateStatusRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Status))
+            {
+                return BadRequest("Status is required.");
+            }
+
+            var validStatuses = new[] { "Open", "In Progress", "Completed", "Cancelled" };
+            if (!validStatuses.Contains(request.Status, StringComparer.OrdinalIgnoreCase))
+            {
+                return BadRequest($"Invalid status. Valid statuses are: {string.Join(", ", validStatuses)}");
+            }
+
+            var updatedOrder = _dataService.UpdateRepairOrderStatus(id, request.Status);
+            if (updatedOrder == null)
+            {
+                return NotFound($"Repair order with ID {id} not found.");
+            }
+
+            return Ok(updatedOrder);
+        }
     }
 }

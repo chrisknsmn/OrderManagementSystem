@@ -1,13 +1,11 @@
 namespace OrderManagementSystem.Models
 {
-    public class Customer
+    public class CustomerWithOrdersDto
     {
         public int Id { get; set; }
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;
-        
-        // Navigation property - One customer can have many repair orders
-        public List<RepairOrder> RepairOrders { get; set; } = new List<RepairOrder>();
+        public List<RepairOrderSummaryDto> RepairOrders { get; set; } = new List<RepairOrderSummaryDto>();
     }
 }

@@ -43,5 +43,16 @@ namespace OrderManagementSystem.Controllers
             var createdVehicle = _dataService.AddVehicle(vehicle);
             return CreatedAtAction(nameof(GetById), new { id = createdVehicle.Id }, createdVehicle);
         }
+
+        // NEW: Get vehicle with repair history
+        [HttpGet("{id}/history")]
+        public ActionResult<object> GetVehicleHistory(int id)
+        {
+            var vehicleWithHistory = _dataService.GetVehicleWithHistory(id);
+            if (vehicleWithHistory == null)
+                return NotFound($"Vehicle with ID {id} not found.");
+            
+            return Ok(vehicleWithHistory);
+        }
     }
 }
