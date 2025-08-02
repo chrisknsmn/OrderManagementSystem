@@ -8,30 +8,31 @@ namespace OrderManagementSystem.Controllers
     [Route("api/[controller]")]
     public class VehiclesController : ControllerBase
     {
-        private readonly DataService _dataService;
+        private readonly IDataService _dataService;
 
-        public VehiclesController(DataService dataService)
+        public VehiclesController(IDataService dataService)
         {
             _dataService = dataService;
         }
 
         [HttpGet]
-        public ActionResult<List<Vehicle>> GetAll()
+        public async Task<ActionResult<List<Vehicle>>> GetAll()
         {
-            return Ok(_dataService.GetAllVehicles());
+            var vehicles = await _dataService.GetAllVehiclesAsync();
+            return Ok(vehicles);
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Vehicle> GetById(int id)
+        public async Task<ActionResult<Vehicle>> GetById(int id)
         {
-            var vehicle = _dataService.GetVehicleById(id);
+            var vehicle = await _dataService.GetVehicleByIdAsync(id);
             if (vehicle == null)
                 return NotFound();
             return Ok(vehicle);
         }
 
         [HttpPost]
-        public ActionResult<Vehicle> Create([FromBody] Vehicle vehicle)
+        public async Task<ActionResult<Vehicle>> Create([FromBody] Vehicle vehicle)
         {
             if (vehicle.Year < 1900 || vehicle.Year > DateTime.Now.Year + 1 ||
                 string.IsNullOrWhiteSpace(vehicle.Make) || 
@@ -40,15 +41,15 @@ namespace OrderManagementSystem.Controllers
                 return BadRequest("Invalid vehicle data");
             }
 
-            var createdVehicle = _dataService.AddVehicle(vehicle);
+            var createdVehicle = await _dataService.AddVehicleAsync(vehicle);
             return CreatedAtAction(nameof(GetById), new { id = createdVehicle.Id }, createdVehicle);
         }
 
         // NEW: Get vehicle with repair history
         [HttpGet("{id}/history")]
-        public ActionResult<object> GetVehicleHistory(int id)
+        public async Task<ActionResult<object>> GetVehicleHistory(int id)
         {
-            var vehicleWithHistory = _dataService.GetVehicleWithHistory(id);
+            var vehicleWithHistory = await _dataService.GetVehicleWithHistoryAsync(id);
             if (vehicleWithHistory == null)
                 return NotFound($"Vehicle with ID {id} not found.");
             

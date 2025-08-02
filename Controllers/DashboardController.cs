@@ -7,17 +7,17 @@ namespace OrderManagementSystem.Controllers
     [Route("api/[controller]")]
     public class DashboardController : ControllerBase
     {
-        private readonly DataService _dataService;
+        private readonly IDataService _dataService;
 
-        public DashboardController(DataService dataService)
+        public DashboardController(IDataService dataService)
         {
             _dataService = dataService;
         }
 
         [HttpGet("statistics")]
-        public ActionResult<object> GetSummaryStatistics()
+        public async Task<ActionResult<object>> GetSummaryStatistics()
         {
-            var stats = _dataService.GetSummaryStatistics();
+            var stats = await _dataService.GetSummaryStatisticsAsync();
             return Ok(stats);
         }
     }

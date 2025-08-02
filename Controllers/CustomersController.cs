@@ -8,30 +8,31 @@ namespace OrderManagementSystem.Controllers
     [Route("api/[controller]")]
     public class CustomersController : ControllerBase
     {
-        private readonly DataService _dataService;
+        private readonly IDataService _dataService;
 
-        public CustomersController(DataService dataService)
+        public CustomersController(IDataService dataService)
         {
             _dataService = dataService;
         }
 
         [HttpGet]
-        public ActionResult<List<Customer>> GetAll()
+        public async Task<ActionResult<List<Customer>>> GetAll()
         {
-            return Ok(_dataService.GetAllCustomers());
+            var customers = await _dataService.GetAllCustomersAsync();
+            return Ok(customers);
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Customer> GetById(int id)
+        public async Task<ActionResult<Customer>> GetById(int id)
         {
-            var customer = _dataService.GetCustomerById(id);
+            var customer = await _dataService.GetCustomerByIdAsync(id);
             if (customer == null)
                 return NotFound();
             return Ok(customer);
         }
 
         [HttpPost]
-        public ActionResult<Customer> Create([FromBody] Customer customer)
+        public async Task<ActionResult<Customer>> Create([FromBody] Customer customer)
         {
             if (string.IsNullOrWhiteSpace(customer.FirstName) || 
                 string.IsNullOrWhiteSpace(customer.LastName) || 
@@ -40,15 +41,15 @@ namespace OrderManagementSystem.Controllers
                 return BadRequest("All fields are required");
             }
 
-            var createdCustomer = _dataService.AddCustomer(customer);
+            var createdCustomer = await _dataService.AddCustomerAsync(customer);
             return CreatedAtAction(nameof(GetById), new { id = createdCustomer.Id }, createdCustomer);
         }
 
         // NEW: Get customer with all their repair orders
         [HttpGet("{id}/orders")]
-        public ActionResult<CustomerWithOrdersDto> GetCustomerWithOrders(int id)
+        public async Task<ActionResult<CustomerWithOrdersDto>> GetCustomerWithOrders(int id)
         {
-            var customerWithOrders = _dataService.GetCustomerWithOrders(id);
+            var customerWithOrders = await _dataService.GetCustomerWithOrdersAsync(id);
             if (customerWithOrders == null)
                 return NotFound($"Customer with ID {id} not found.");
             
