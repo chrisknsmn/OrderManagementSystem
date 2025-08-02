@@ -5,6 +5,8 @@ VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderManagementSystem", "OrderManagementSystem.csproj", "{E64B8AD4-DC72-47CE-B470-C8FDF459BF9B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RepairOrderSystem.Console", "RepairOrderSystem.Console\RepairOrderSystem.Console.csproj", "{8D25666E-0C7A-42D4-870D-E6C68FF2095E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{E64B8AD4-DC72-47CE-B470-C8FDF459BF9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E64B8AD4-DC72-47CE-B470-C8FDF459BF9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E64B8AD4-DC72-47CE-B470-C8FDF459BF9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D25666E-0C7A-42D4-870D-E6C68FF2095E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D25666E-0C7A-42D4-870D-E6C68FF2095E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D25666E-0C7A-42D4-870D-E6C68FF2095E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D25666E-0C7A-42D4-870D-E6C68FF2095E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
