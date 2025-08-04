@@ -2,14 +2,14 @@
 
 A modern, full-stack repair order management system built with **Vue.js 3**, **TypeScript**, **Bootstrap 5**, **ASP.NET Core 8**, and **Entity Framework Core**.
 
-## 🏗️ Architecture
+## Architecture
 
 - **Frontend**: Vue.js 3 + TypeScript + Bootstrap 5 + Vite
 - **Backend**: ASP.NET Core 8 Web API + Entity Framework Core
 - **Database**: SQLite (development) / SQL Server (production)
 - **Deployment**: Docker + Docker Compose
 
-## ✨ Features
+## Features
 
 ### Backend API
 - ✅ RESTful API with Swagger documentation
@@ -71,7 +71,7 @@ az login
 az webapp up --runtime "DOTNET|8.0" --sku F1 --name your-app-name
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 OrderManagementSystem/
