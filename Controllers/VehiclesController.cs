@@ -45,15 +45,18 @@ namespace OrderManagementSystem.Controllers
             return CreatedAtAction(nameof(GetById), new { id = createdVehicle.Id }, createdVehicle);
         }
 
-        // NEW: Get vehicle with repair history
-        [HttpGet("{id}/history")]
-        public async Task<ActionResult<object>> GetVehicleHistory(int id)
+
+        // DELETE: Delete vehicle and all related repair orders
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteVehicle(int id)
         {
-            var vehicleWithHistory = await _dataService.GetVehicleWithHistoryAsync(id);
-            if (vehicleWithHistory == null)
+            var deleted = await _dataService.DeleteVehicleAsync(id);
+            if (!deleted)
+            {
                 return NotFound($"Vehicle with ID {id} not found.");
-            
-            return Ok(vehicleWithHistory);
+            }
+
+            return NoContent();
         }
     }
 }

@@ -93,15 +93,16 @@ namespace OrderManagementSystem.Data
                 new Vehicle { Id = 6, Year = 2020, Make = "Audi", Model = "A4" }
             );
 
-            // Seed repair orders
+            // Seed repair orders with fixed dates (DateTime.Now causes issues in migrations)
+            var baseDate = new DateTime(2025, 1, 1);
             modelBuilder.Entity<RepairOrder>().HasData(
-                new RepairOrder { Id = 1, CustomerId = 1, VehicleId = 1, CreatedDate = DateTime.Now.AddDays(-15), Description = "Oil change and brake inspection", EstimatedCost = 150.00m, Status = "Completed" },
-                new RepairOrder { Id = 2, CustomerId = 2, VehicleId = 2, CreatedDate = DateTime.Now.AddDays(-10), Description = "Transmission repair", EstimatedCost = 2500.00m, Status = "In Progress" },
-                new RepairOrder { Id = 3, CustomerId = 1, VehicleId = 1, CreatedDate = DateTime.Now.AddDays(-5), Description = "Replace air filter and spark plugs", EstimatedCost = 200.00m, Status = "Open" },
-                new RepairOrder { Id = 4, CustomerId = 3, VehicleId = 3, CreatedDate = DateTime.Now.AddDays(-3), Description = "Tire rotation and alignment", EstimatedCost = 120.00m, Status = "Completed" },
-                new RepairOrder { Id = 5, CustomerId = 4, VehicleId = 4, CreatedDate = DateTime.Now.AddDays(-7), Description = "Engine diagnostic and repair", EstimatedCost = 800.00m, Status = "In Progress" },
-                new RepairOrder { Id = 6, CustomerId = 2, VehicleId = 2, CreatedDate = DateTime.Now.AddDays(-2), Description = "Battery replacement", EstimatedCost = 180.00m, Status = "Open" },
-                new RepairOrder { Id = 7, CustomerId = 5, VehicleId = 5, CreatedDate = DateTime.Now.AddDays(-1), Description = "Annual maintenance service", EstimatedCost = 450.00m, Status = "Open" }
+                new RepairOrder { Id = 1, CustomerId = 1, VehicleId = 1, CreatedDate = baseDate.AddDays(-15), Description = "Oil change and brake inspection", EstimatedCost = 150.00m, Status = "Completed" },
+                new RepairOrder { Id = 2, CustomerId = 2, VehicleId = 2, CreatedDate = baseDate.AddDays(-10), Description = "Transmission repair", EstimatedCost = 2500.00m, Status = "In Progress" },
+                new RepairOrder { Id = 3, CustomerId = 1, VehicleId = 1, CreatedDate = baseDate.AddDays(-5), Description = "Replace air filter and spark plugs", EstimatedCost = 200.00m, Status = "Open" },
+                new RepairOrder { Id = 4, CustomerId = 3, VehicleId = 3, CreatedDate = baseDate.AddDays(-3), Description = "Tire rotation and alignment", EstimatedCost = 120.00m, Status = "Completed" },
+                new RepairOrder { Id = 5, CustomerId = 4, VehicleId = 4, CreatedDate = baseDate.AddDays(-7), Description = "Engine diagnostic and repair", EstimatedCost = 800.00m, Status = "In Progress" },
+                new RepairOrder { Id = 6, CustomerId = 2, VehicleId = 2, CreatedDate = baseDate.AddDays(-2), Description = "Battery replacement", EstimatedCost = 180.00m, Status = "Open" },
+                new RepairOrder { Id = 7, CustomerId = 5, VehicleId = 5, CreatedDate = baseDate.AddDays(-1), Description = "Annual maintenance service", EstimatedCost = 450.00m, Status = "Open" }
             );
         }
     }

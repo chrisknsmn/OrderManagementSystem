@@ -45,15 +45,18 @@ namespace OrderManagementSystem.Controllers
             return CreatedAtAction(nameof(GetById), new { id = createdCustomer.Id }, createdCustomer);
         }
 
-        // NEW: Get customer with all their repair orders
-        [HttpGet("{id}/orders")]
-        public async Task<ActionResult<CustomerWithOrdersDto>> GetCustomerWithOrders(int id)
+
+        // DELETE: Delete customer and all related repair orders
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteCustomer(int id)
         {
-            var customerWithOrders = await _dataService.GetCustomerWithOrdersAsync(id);
-            if (customerWithOrders == null)
+            var deleted = await _dataService.DeleteCustomerAsync(id);
+            if (!deleted)
+            {
                 return NotFound($"Customer with ID {id} not found.");
-            
-            return Ok(customerWithOrders);
+            }
+
+            return NoContent();
         }
     }
 }

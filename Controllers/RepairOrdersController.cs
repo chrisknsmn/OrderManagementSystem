@@ -31,15 +31,6 @@ namespace OrderManagementSystem.Controllers
             return Ok(repairOrder);
         }
 
-        [HttpGet("search")]
-        public async Task<ActionResult<List<RepairOrder>>> SearchByCustomerLastName([FromQuery] string lastName)
-        {
-            if (string.IsNullOrWhiteSpace(lastName))
-                return BadRequest("Last name is required");
-
-            var results = await _dataService.SearchRepairOrdersByCustomerLastNameAsync(lastName);
-            return Ok(results);
-        }
 
         [HttpPost]
         public async Task<ActionResult<RepairOrder>> Create([FromBody] RepairOrder repairOrder)
@@ -72,28 +63,18 @@ namespace OrderManagementSystem.Controllers
             return Ok(orders);
         }
 
-        // NEW: Update repair order status
-        [HttpPatch("{id}/status")]
-        public async Task<ActionResult<RepairOrder>> UpdateRepairOrderStatus(int id, [FromBody] UpdateStatusRequest request)
+
+        // DELETE: Delete repair order
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteRepairOrder(int id)
         {
-            if (string.IsNullOrWhiteSpace(request.Status))
-            {
-                return BadRequest("Status is required.");
-            }
-
-            var validStatuses = new[] { "Open", "In Progress", "Completed", "Cancelled" };
-            if (!validStatuses.Contains(request.Status, StringComparer.OrdinalIgnoreCase))
-            {
-                return BadRequest($"Invalid status. Valid statuses are: {string.Join(", ", validStatuses)}");
-            }
-
-            var updatedOrder = await _dataService.UpdateRepairOrderStatusAsync(id, request.Status);
-            if (updatedOrder == null)
+            var deleted = await _dataService.DeleteRepairOrderAsync(id);
+            if (!deleted)
             {
                 return NotFound($"Repair order with ID {id} not found.");
             }
 
-            return Ok(updatedOrder);
+            return NoContent();
         }
     }
 }

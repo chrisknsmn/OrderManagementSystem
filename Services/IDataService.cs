@@ -8,21 +8,19 @@ namespace OrderManagementSystem.Services
         Task<List<Customer>> GetAllCustomersAsync();
         Task<Customer?> GetCustomerByIdAsync(int id);
         Task<Customer> AddCustomerAsync(Customer customer);
-        Task<CustomerWithOrdersDto?> GetCustomerWithOrdersAsync(int customerId);
+        Task<bool> DeleteCustomerAsync(int id);
 
         // Vehicle operations
         Task<List<Vehicle>> GetAllVehiclesAsync();
         Task<Vehicle?> GetVehicleByIdAsync(int id);
         Task<Vehicle> AddVehicleAsync(Vehicle vehicle);
-        Task<object?> GetVehicleWithHistoryAsync(int vehicleId);
+        Task<bool> DeleteVehicleAsync(int id);
 
         // Repair order operations
         Task<List<RepairOrder>> GetAllRepairOrdersAsync();
         Task<RepairOrder?> GetRepairOrderByIdAsync(int id);
         Task<RepairOrder> AddRepairOrderAsync(RepairOrder repairOrder);
-        Task<List<RepairOrder>> SearchRepairOrdersByCustomerLastNameAsync(string lastName);
         Task<List<RepairOrder>> GetRepairOrdersByStatusAsync(string status);
-        Task<RepairOrder?> UpdateRepairOrderStatusAsync(int id, string status);
-        Task<object> GetSummaryStatisticsAsync();
+        Task<bool> DeleteRepairOrderAsync(int id);
     }
 }

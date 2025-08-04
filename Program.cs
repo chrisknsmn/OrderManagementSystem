@@ -6,7 +6,12 @@ using OrderManagementSystem.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+    });
 
 // Add Entity Framework Core with SQL Server (production) or SQLite (development)
 builder.Services.AddDbContext<RepairOrderContext>(options =>
@@ -45,32 +50,48 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<RepairOrderContext>();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+    
     try
     {
-        context.Database.EnsureCreated();
+        // Ensure database is created
+        var created = context.Database.EnsureCreated();
+        logger.LogInformation($"Database created: {created}");
         
-        // Add initial repair orders if they don't exist
-        if (!context.RepairOrders.Any())
+        // Check if data already exists
+        var customerCount = context.Customers.Count();
+        var vehicleCount = context.Vehicles.Count();
+        var orderCount = context.RepairOrders.Count();
+        
+        logger.LogInformation($"Existing data - Customers: {customerCount}, Vehicles: {vehicleCount}, Orders: {orderCount}");
+        
+        // If no data exists, the model seeding should have handled it
+        // But let's add some additional orders with current dates for better demo
+        if (orderCount < 5)
         {
-            var repairOrders = new[]
+            logger.LogInformation("Adding additional demo repair orders...");
+            
+            var additionalOrders = new[]
             {
-                new RepairOrder { Id = 1, CustomerId = 1, VehicleId = 1, CreatedDate = DateTime.Now.AddDays(-15), Description = "Oil change and brake inspection", EstimatedCost = 150.00m, Status = "Completed" },
-                new RepairOrder { Id = 2, CustomerId = 2, VehicleId = 2, CreatedDate = DateTime.Now.AddDays(-10), Description = "Transmission repair", EstimatedCost = 2500.00m, Status = "In Progress" },
-                new RepairOrder { Id = 3, CustomerId = 1, VehicleId = 1, CreatedDate = DateTime.Now.AddDays(-5), Description = "Replace air filter and spark plugs", EstimatedCost = 200.00m, Status = "Open" },
-                new RepairOrder { Id = 4, CustomerId = 3, VehicleId = 3, CreatedDate = DateTime.Now.AddDays(-3), Description = "Tire rotation and alignment", EstimatedCost = 120.00m, Status = "Completed" },
-                new RepairOrder { Id = 5, CustomerId = 4, VehicleId = 4, CreatedDate = DateTime.Now.AddDays(-7), Description = "Engine diagnostic and repair", EstimatedCost = 800.00m, Status = "In Progress" },
-                new RepairOrder { Id = 6, CustomerId = 2, VehicleId = 2, CreatedDate = DateTime.Now.AddDays(-2), Description = "Battery replacement", EstimatedCost = 180.00m, Status = "Open" },
-                new RepairOrder { Id = 7, CustomerId = 5, VehicleId = 5, CreatedDate = DateTime.Now.AddDays(-1), Description = "Annual maintenance service", EstimatedCost = 450.00m, Status = "Open" }
+                new RepairOrder { CustomerId = 1, VehicleId = 1, CreatedDate = DateTime.Now.AddDays(-15), Description = "Oil change and brake inspection", EstimatedCost = 150.00m, Status = "Completed" },
+                new RepairOrder { CustomerId = 2, VehicleId = 2, CreatedDate = DateTime.Now.AddDays(-10), Description = "Transmission repair", EstimatedCost = 2500.00m, Status = "In Progress" },
+                new RepairOrder { CustomerId = 1, VehicleId = 1, CreatedDate = DateTime.Now.AddDays(-5), Description = "Replace air filter and spark plugs", EstimatedCost = 200.00m, Status = "Open" },
+                new RepairOrder { CustomerId = 3, VehicleId = 3, CreatedDate = DateTime.Now.AddDays(-3), Description = "Tire rotation and alignment", EstimatedCost = 120.00m, Status = "Completed" },
+                new RepairOrder { CustomerId = 4, VehicleId = 4, CreatedDate = DateTime.Now.AddDays(-7), Description = "Engine diagnostic and repair", EstimatedCost = 800.00m, Status = "In Progress" },
+                new RepairOrder { CustomerId = 2, VehicleId = 2, CreatedDate = DateTime.Now.AddDays(-2), Description = "Battery replacement", EstimatedCost = 180.00m, Status = "Open" }
             };
             
-            context.RepairOrders.AddRange(repairOrders);
-            context.SaveChanges();
+            context.RepairOrders.AddRange(additionalOrders);
+            var savedCount = context.SaveChanges();
+            logger.LogInformation($"Added {savedCount} repair orders to database");
         }
+        
+        // Log final counts
+        var finalOrderCount = context.RepairOrders.Count();
+        logger.LogInformation($"Final repair order count: {finalOrderCount}");
     }
     catch (Exception ex)
     {
-        // Log error but don't crash the application
-        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
         logger.LogError(ex, "An error occurred while creating/seeding the database.");
     }
 }
@@ -86,7 +107,15 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowConsoleApp");
 
 app.UseHttpsRedirection();
+
+// Serve static files from wwwroot
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.UseAuthorization();
 app.MapControllers();
+
+// Fallback to index.html for SPA routing
+app.MapFallbackToFile("index.html");
 
 app.Run();
